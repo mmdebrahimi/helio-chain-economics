@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+title: "helio-chain-economics: A parametric model for orbital infrastructure economics"
+message: "If you use this model, please cite it as below."
+type: software
+authors:
+  - given-names: Farshad
+    alias: mmdebrahimi
+year: 2026
+url: "https://github.com/mmdebrahimi/helio-chain-economics"
+repository-code: "https://github.com/mmdebrahimi/helio-chain-economics"
+license: MIT
+keywords:
+  - space-economics
+  - space-based-solar-power
+  - orbital-data-centers
+  - parametric-model
+  - python
