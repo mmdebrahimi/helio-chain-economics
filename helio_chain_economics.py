@@ -205,12 +205,12 @@ def make_default_inputs() -> dict[str, Parameter]:
         ),
         "conversion_efficiency": Parameter(
             name="conversion_efficiency",
-            placeholder_value=0.146,  # T4-committed: NASA OTPS 8-stage chain product
+            placeholder_value=0.130,  # T4-committed: NASA OTPS 8-stage chain product (arithmetic-corrected from 0.146; the 8 verified stages multiply to 0.1297)
             placeholder_range=(0.05, 0.30),
             units="dimensionless (sunlight → ground DC)",
             tier=Tier.T4,
             source_locator="https://www.nasa.gov/wp-content/uploads/2024/01/otps-sbsp-report-final-tagged-approved-1-8-24-tagged-v2.pdf",
-            notes="PRIMARY-VERIFIED 2026-05-23 PDF fetch. NASA OTPS 8-stage chain: solar cell 35% × DC-DC 90% × DC-RF 70% × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78% × DC-DC on ground 90% = ~14.6% end-to-end. Range allows for advanced PV (50% triple-junction) downside + degradation (5% worst-case) upside.",
+            notes="PRIMARY-VERIFIED 2026-05-23 PDF fetch. NASA OTPS 8-stage chain: solar cell 35% × DC-DC 90% × DC-RF 70% × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78% × DC-DC on ground 90% = ~13.0% end-to-end (CORRECTED 2026-06-07: the value previously stated here as ~14.6% is the arithmetic product of these 8 verified stages, which is 12.97% — the 8 values appear verbatim in the cached NASA OTPS PDF at extracted-text line 588; NASA's ~11%-to-grid headline reconciles with ~13.0% once the final DC-AC grid stage is added). Range allows for advanced PV (50% triple-junction) downside + degradation (5% worst-case) upside.",
         ),
         "radiator_temperature": Parameter(
             name="radiator_temperature",
@@ -328,7 +328,7 @@ def make_default_inputs() -> dict[str, Parameter]:
         # --- DEPRECATED v0.7 — direct power-as-a-service (microwave/laser to terrestrial rectenna) ---
         # Was a v0.2 wedge anchored at T3 (2026-05-23 23:20) per autonomous /research run on remote-off-grid power tariffs.
         # REMOVED FROM HELIO CHAIN SCOPE 2026-05-25 per user clarification: helio chain does NOT beam generated electricity
-        # to ground via microwave/laser. The 8-stage SBSP-to-ground conversion chain (~14.6% efficiency per NASA OTPS) is
+        # to ground via microwave/laser. The 8-stage SBSP-to-ground conversion chain (~13.0% efficiency per NASA OTPS) is
         # the trap that prior orbital-power proposals fall into; the helio chain explicitly rejects this architecture.
         # Parameter + revenue function are preserved as a deprecated reference and for reproducing the §1.2 trap framing
         # in the article (article v0.7 §1.2 Trap 2 uses this to demonstrate why SBSP-to-ground LCOE comparison fails).
@@ -1282,7 +1282,7 @@ def sbsp_to_ground_lcoe(
     delivered_power_gw_to_ground: float,
     system_lifetime_years: float,
     capacity_factor: float = 0.9,
-    end_to_end_efficiency: float = 0.146,
+    end_to_end_efficiency: float = 0.130,
     power_density_kw_per_kg: float = 0.64,
     system_mass_kg_override: float | None = None,
 ) -> dict[str, float]:
@@ -1295,8 +1295,11 @@ def sbsp_to_ground_lcoe(
 
     The 8-stage end-to-end conversion chain (PV cell 35% × DC-DC 90% × DC-RF 70%
     × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78%
-    × ground DC-DC 90% ≈ 14.6%) is verified verbatim against NASA OTPS 2024
-    primary PDF (cached at research_outputs/_pdf_cache/nasa_otps_sbsp_2024.txt).
+    × ground DC-DC 90% ≈ 13.0%) is verified verbatim against NASA OTPS 2024
+    primary PDF (cached at research_outputs/_pdf_cache/nasa_otps_sbsp_2024.txt;
+    NASA's verbatim per-stage list — "summary of major losses of efficiency for
+    each functional step" — is at extracted-text line 588). Their product is
+    ~13.0% (12.97%), NOT the 14.6% previously stated here — see RETRACTIONS C1.
 
     Returns dict matching orbital_power_cost() structure for symmetry.
     """

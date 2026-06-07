@@ -3,6 +3,8 @@
 **Run date:** 2026-05-25
 **Model version:** helio_chain_economics.py with `direct_power_unit_economics()` (added 2026-05-25)
 
+> **Historical record — read with two later corrections in mind.** (1) This wedge (direct power-as-a-service to ground) was **retracted from scope** on 2026-05-25 (RETRACTIONS R1). (2) The 14.6% end-to-end efficiency used below was **arithmetic-corrected to ~13.0%** on 2026-06-07 (RETRACTIONS C1); the verdicts here are reported as-run at 14.6% and are not re-derived, since the wedge is already out of scope.
+
 ## Question being tested
 
 The v2 article's section 0.1 claims Phase 1 (the reflector-services trio) is *launch-cost-tolerant* and "closes net-positive at current $3,600/kg launch costs because customer willingness-to-pay is anchored at $0.50-$4.09/kWh". This script tests whether the only T3 sub-wedge (direct-power-as-a-service) survives a full unit-economics audit that includes ground-station capex, financing (WACC), O&M, insurance, regulatory cost, and customer procurement.

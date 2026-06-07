@@ -30,7 +30,7 @@
 
 | # | Claim | Source | Tier | Notes |
 |---|---|---|---|---|
-| 6 | NASA OTPS end-to-end conversion efficiency chain (8 stages) | NASA OTPS p. ~30 (extracted line 1645-1650) | **T4** | Stages: solar cell 35% × DC-DC 90% × DC-RF 70% × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78% × DC-DC on ground 90% = product ≈ 14.6% end-to-end. Replaces the model's PLACEHOLDER for `conversion_efficiency` parameter. |
+| 6 | NASA OTPS end-to-end conversion efficiency chain (8 stages) | NASA OTPS "summary of major losses of efficiency for each functional step" — verbatim at extracted-text line 588 of `research_outputs/_pdf_cache/nasa_otps_sbsp_2024.txt` (re-confirmed 2026-06-07) | **T4** | Stages: solar cell 35% × DC-DC 90% × DC-RF 70% × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78% × DC-DC on ground 90% = product ≈ 13.0% end-to-end (CORRECTED 2026-06-07: previously stated ≈14.6%; the 8 listed stages multiply to 12.97% — see RETRACTIONS C1). Replaces the model's PLACEHOLDER for `conversion_efficiency` parameter. |
 | 7 | NASA OTPS SBSP system mass: RD1 5.9 Mkg, RD2 10 Mkg | NASA OTPS abstract (line 198-199) | **T4** | Total system upmass. RD1 requires 2,316 launches; RD2 requires 3,960. Manufacturing learning rates: 75% for modules, 85% for servicers, 90% for ADR vehicles. |
 | 8 | NASA OTPS RD1/RD2 LCOE relative to 2050 terrestrial projections | NASA OTPS abstract (line 209) | **T4** | "RD1 LCOE and RD2 LCOE are 12-31 and 32-80 times higher, respectively, than the 2050 projections for terrestrial alternatives" — quantifies the gap SBSP must close. |
 | 9 | Suncatcher Trillium TPU radiation tolerance — primary | Suncatcher paper §2.3 (line 18-19) | **T4** | "Trillium TPUs are radiation tested. They survive a total ionizing dose equivalent to a 5 year mission life without permanent failures" + HBM UECC rate "approximately one event per 50 rad" + SEFI ~ "one event per 450 rad(Si) for CPU and 400 rad(Si) for RAM". Resurrects the row that was rejected from intake on word-count cap; can split into focused short-quote rows now. |
@@ -70,7 +70,7 @@
 
 The parametric economics model's inputs at T4-anchored defaults from primary-verified sources. Per `helio_chain_economics.py`'s `Parameter.value_or_placeholder()` discipline:
 - `launch_cost`: T4 anchored — current $3,600/kg (Suncatcher cite); break-even target $200/kg (Suncatcher §2.4 mid-2030s)
-- `conversion_efficiency`: T4 anchored — 14.6% end-to-end product of NASA's 8-stage chain (Row 6)
+- `conversion_efficiency`: T4 anchored — ~13.0% end-to-end product of NASA's 8-stage chain (Row 6; arithmetic-corrected from 14.6%)
 - `orbital_compute_revenue`: T4 anchored — Suncatcher $14,700/kW/y current → $810/kW/y at $200/kg; terrestrial DC $570-3,000/kW/y (Row 4)
 
 Remaining inputs still at PLACEHOLDER (some new in v0.2 wedge restructure 2026-05-23 22:45 per /probe scrutiny):

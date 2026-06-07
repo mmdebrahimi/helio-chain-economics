@@ -1,6 +1,6 @@
 # Assumptions
 
-The Helio Chain v2 economics model has 16 named parameters. Each carries a Promotion-Gate tier flag from T1 (direction-setting only) to T5 (empirically reproduced). Until a parameter reaches T3, the model treats it as a placeholder range with **no committed default** — `value_or_placeholder()` will refuse to give callers a point estimate for unpromoted inputs.
+The Helio Chain v2 economics model has 16 named parameters. Each carries a Promotion-Gate tier flag from T1 (direction-setting only) to T5 (empirically reproduced). Until a parameter reaches T3, the model treats it as a placeholder range with **no committed default** — `value_or_placeholder()` returns the midpoint of that range as an explicitly non-committable soft anchor for unpromoted inputs (it does not refuse the call); the no-weight discipline is enforced by the tier flag and the claim-promotion register, not by the accessor itself.
 
 This file lists every parameter, its current state, the range used in sensitivity analysis, and the primary source. If you want to attack the thesis, **attack a parameter**: tell me the value is wrong, give me the source that says so, and the model will tell you whether the conclusion survives.
 
@@ -29,7 +29,7 @@ This file lists every parameter, its current state, the range used in sensitivit
 - **What would change my mind:** Evidence that Starship learning rate is materially below 20% historical, that cumulative launched mass through 2035 falls below ~370,000 t, or that the 180 Starship launches/year cadence is structurally unreachable.
 
 ### `conversion_efficiency`
-- **Value:** 14.6% (NASA OTPS 8-stage chain product, for SBSP-to-ground trap framing); **24% used in helio chain** (orbit-to-orbit; v0.11 tightening from 0.30 after audit)
+- **Value:** ~13.0% (NASA OTPS 8-stage chain product, for SBSP-to-ground trap framing; arithmetic-corrected 2026-06-07 from a mis-stated 14.6% — the 8 listed stages multiply to 12.97%, see RETRACTIONS C1); **24% used in helio chain** (orbit-to-orbit; v0.11 tightening from 0.30 after audit)
 - **Range:** 5% (degradation worst-case) - 30% (advanced PV upside)
 - **Source:** NASA OTPS Jan 2024 SBSP report (`https://www.nasa.gov/wp-content/uploads/2024/01/otps-sbsp-report-final-tagged-approved-1-8-24-tagged-v2.pdf`).
 - **What would change my mind:** A primary-source 8-stage-chain audit producing a different efficiency product, or a credible 2-stage orbit-to-orbit derating that pushes the 24% below 0.18 or above 0.32.

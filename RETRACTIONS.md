@@ -12,7 +12,7 @@ If you are evaluating the Helio Chain v2 article, read this before you read anyt
 
 **What I originally claimed.** A v0.2 wedge of the helio chain was selling orbital-generated electricity to terrestrial customers via microwave / laser → rectenna. The wedge had a T3-anchored revenue parameter (`direct_power_as_a_service_revenue`, range $0.10-$4.09/kWh, midpoint $0.50/kWh) sourced from off-grid power tariffs (NREL South Pole 2024; Hawaii island-grid; Pentagon FBCF). The wedge appeared to close at remote / off-grid pricing tiers.
 
-**Why I retracted.** The premise itself is the trap that has killed every prior SBSP pitch. The NASA OTPS January 2024 report models the 8-stage orbit-to-ground conversion chain at ~14.6% end-to-end efficiency; LCOE lands at $0.61-$1.59/kWh against terrestrial renewables at $0.02-$0.05/kWh. Including this wedge in the helio chain meant the thesis was structurally identical to the orbital-power pitches that have been rejected for fifty years. The architectural fix is to drop ground-delivery of generated electricity entirely.
+**Why I retracted.** The premise itself is the trap that has killed every prior SBSP pitch. The NASA OTPS January 2024 report models the 8-stage orbit-to-ground conversion chain at ~13% end-to-end efficiency (see C1 correction below); LCOE lands at $0.61-$1.59/kWh against terrestrial renewables at $0.02-$0.05/kWh. Including this wedge in the helio chain meant the thesis was structurally identical to the orbital-power pitches that have been rejected for fifty years. The architectural fix is to drop ground-delivery of generated electricity entirely.
 
 **What survived.** Reflected *sunlight* to ground is still in scope, as photons (not as kWh). The helio chain's orbital-generated electricity stays in orbit (compute, manufacturing, lasers, beam propulsion, eventually HEP infrastructure).
 
@@ -32,7 +32,7 @@ The physics-corrected falsification (`results_phase1_thermal_warming_falsificati
 
 **What survived.** Thermal warming is **not** a Phase 1 launch-cost-tolerant wedge. It is recast as a Phase 2-3 research-portfolio item requiring constellation-scale validation. Phase 1 launch-cost-tolerance now rests on premium illumination alone (see R3 for narrowing).
 
-**Where the corrected falsification lives.** `economics_model/results_phase1_thermal_warming_falsification_2026-05-26.md`. The original 11/11-CLOSE result is archived alongside as the negative example.
+**Where the corrected falsification lives.** `results/results_phase1_thermal_warming_falsification_2026-05-26.md`. The original 11/11-CLOSE result is archived alongside as the negative example.
 
 **Lesson.** A model is only useful if it is allowed to hurt the thesis. Two rounds of my own review missed the dimensional inconsistency because I was looking for confirmation; the audit caught it because the auditors were looking for failure.
 
@@ -51,6 +51,16 @@ The physics-corrected falsification (`results_phase1_thermal_warming_falsificati
 **Annual net at the narrowed tier:** 200 missions/year × $50K, even at today's $3,600/kg launch, lands at approximately $9.6M annual net. Worst case (20 missions × $1K) fails. The wedge is real but narrower than originally written.
 
 ---
+
+## C1 — Conversion-efficiency arithmetic correction (SBSP-to-ground chain: 14.6% → 13.0%)
+
+**Date corrected:** 2026-06-07 (numerical correction, not a thesis retraction).
+
+**What was wrong.** The model and article stated the NASA OTPS 8-stage SBSP-to-ground conversion chain at **~14.6%** end-to-end efficiency, described as the product of the 8 verified stages. But the eight stage values themselves — solar cell 35% × DC-DC 90% × DC-RF 70% × antenna 90% × atmospheric 98% × beam collection 95% × rectenna 78% × ground DC-DC 90% — multiply to **12.97% ≈ 13.0%**, not 14.6%. The stage values were primary-verified — the eight values appear verbatim in NASA OTPS ("summary of major losses of efficiency for each functional step"), now cached in-repo at `research_outputs/_pdf_cache/nasa_otps_sbsp_2024.txt` (extracted-text line 588); the *product* was mis-stated. An independent cross-check confirms 13.0%: NASA's widely-cited ~11%-to-grid end-to-end figure (IEEE Spectrum; "≈9 GW collected in space per 1 GW delivered to grid") reconciles with this chain — which stops at ground DC, before the final DC-AC grid stage — at ~13.0% × ~0.9 ≈ 11.7%, whereas 14.6% × 0.9 ≈ 13.1% overshoots it.
+
+**What changed.** The `conversion_efficiency` default was corrected 0.146 → 0.130 in `helio_chain_economics.py` (and `sbsp_to_ground_lcoe()`'s `end_to_end_efficiency` default). The two trap-framing LCOEs, re-run from the model: at $200/kg, $0.0149 → **$0.0168/kWh**; at $3,600/kg, $0.2688 → **$0.3019/kWh**; trap-framing orbital-PV mass 10,702 t → **12,019 t**. Propagated to `ARTICLE_FULL.md`, `ASSUMPTIONS.md`, `README.md`, and `docs/CLAIM_PROMOTION_REGISTER.md`. NOT propagated: the dated 2026-05-25 direct-power falsification artifacts (`results/results_phase1_falsification_2026-05-25.md`, `run_phase1_falsification.py`) — historical records of an already-retracted wedge (R1) whose derived break-evens were computed at 0.146.
+
+**What did NOT change.** The helio chain's actual product uses the orbital-only ~24% chain (`orbital_power_cost()`), independent of this correction — the keystone $0.0091/kWh ($200/kg) and $0.1635/kWh ($3,600/kg) are unchanged. The correction makes the SBSP-to-ground trap *more* brutal (lower efficiency, higher LCOE), which strengthens — not weakens — the thesis that ground delivery is the economic trap.
 
 ## What this means for reading the model
 

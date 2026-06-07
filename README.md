@@ -2,7 +2,7 @@
 
 A parametric economics model for evaluating space-based solar power (SBSP) + orbital data center + beam propulsion + reflector services as a coordinated multi-decade infrastructure bet ("the helio chain").
 
-Companion to the Medium article *The Helio Chain: Why Every Space-Solar Pitch Has Been Wrong About the Product*.
+Companion to the Medium article *A Runnable, Falsifiable Model for Orbital-Power Economics*.
 
 **The repo exists so the article can be attacked at the input level.** If you think a number is wrong, [open an issue](../../issues/new?template=argue-with-an-input.md) — that is the highest-leverage contribution this project can receive. Read [`RETRACTIONS.md`](./RETRACTIONS.md) before evaluating the thesis; the project has already retracted one wedge and narrowed another, and the next retraction is more useful than another endorsement.
 
@@ -24,7 +24,7 @@ Plus a Stefan-Boltzmann radiator-mass function (`radiator_mass_per_mw_thermal`) 
 
 ## Why tier discipline
 
-Every numeric input has a tier flag. Until a parameter's source reaches `T3`, the model treats it as a placeholder range with NO committed default — the article cites only T3+ when making numerical claims, and ranges are reported when the discipline forbids point estimates. This prevents unpromoted research from becoming load-bearing economics. See `_claim_promotion_register.md` (in the companion research outputs) for the per-parameter source attribution and tier rationale.
+Every numeric input has a tier flag. Until a parameter's source reaches `T3`, the model treats it as a placeholder range with NO committed default — the article cites only T3+ when making numerical claims, and ranges are reported when the discipline forbids point estimates. This prevents unpromoted research from becoming load-bearing economics. See `docs/CLAIM_PROMOTION_REGISTER.md` (in the companion research outputs) for the per-parameter source attribution and tier rationale.
 
 Current state: 6 inputs at T4 (public-claim usable, primary-source verified) + 5 inputs at T3 + 5 inputs at PLACEHOLDER.
 
@@ -70,7 +70,7 @@ print(lcoe(inputs, system_mass_kg=10_000_000, system_lifetime_years=20, power_de
 # Expected: ~0.0166 ($/kWh) — SBSP-to-ground LCOE at $200/kg, matching results/results_dry_run.md §2.1
 ```
 
-> Note: this `lcoe()` figure is the SBSP-**to-ground** levelized cost (the trap-framing baseline). The keystone **orbit-to-orbit** result of $0.0091/kWh at $200/kg is a separate output — see `results/results_dry_run.md` for the orbital-power-cost computation, which applies the 2-3 stage (≈24%) conversion chain rather than the 8-stage (14.6%) ground chain.
+> Note: this `lcoe()` figure is the SBSP-**to-ground** levelized cost (the trap-framing baseline). The keystone **orbit-to-orbit** result of $0.0091/kWh at $200/kg is a separate output — see `results/results_dry_run.md` for the orbital-power-cost computation, which applies the 2-3 stage (≈24%) conversion chain rather than the 8-stage (~13%) ground chain.
 
 ### Add a new wedge
 
@@ -82,7 +82,7 @@ Add a new value to the `StalledCurve` enum, then add a branch in `stalled_progre
 
 ### Promote a parameter from PLACEHOLDER to T3+
 
-Add a primary-source citation to `_claim_promotion_register.md` first. Then update the `Parameter`'s `tier`, `placeholder_value`, `source_locator`, and `notes`. The model's `value_or_placeholder()` method automatically uses the committed value for T3+ parameters.
+Add a primary-source citation to `docs/CLAIM_PROMOTION_REGISTER.md` first. Then update the `Parameter`'s `tier`, `placeholder_value`, `source_locator`, and `notes`. The model's `value_or_placeholder()` method automatically uses the committed value for T3+ parameters.
 
 ## Limitations
 
@@ -97,7 +97,7 @@ All claims sourced. See:
 
 - [`ASSUMPTIONS.md`](./ASSUMPTIONS.md) — every parameter, range, tier, and primary source. **Start here if you want to attack the model.**
 - [`RETRACTIONS.md`](./RETRACTIONS.md) — three claims the model surfaced, that I initially believed, and that the model later forced me to retract or narrow (R1 direct-power-as-a-service, R2 thermal warming, R3 premium illumination defense tier).
-- `_claim_promotion_register.md` — per-parameter tier classification + source attribution
+- `docs/CLAIM_PROMOTION_REGISTER.md` — per-parameter tier classification + source attribution
 - `_followup_queue.md` — open verification items
 - Source research memos (3 total, 66+ supported rows): orbital compute economics, remote off-grid power tariffs, reflector areal density
 
@@ -111,7 +111,7 @@ MIT. See `LICENSE`.
 
 If you use this model in your own analysis, please cite:
 
-> Farshad (mmdebrahimi). (2026). *helio-chain-economics: A parametric model for orbital infrastructure economics.* GitHub. https://github.com/mmdebrahimi/helio-chain-economics. Companion to *The Helio Chain: Why Every Space-Solar Pitch Has Been Wrong About the Product*, Medium, [publication date + URL].
+> Farshad (mmdebrahimi). (2026). *helio-chain-economics: A parametric model for orbital infrastructure economics.* GitHub. https://github.com/mmdebrahimi/helio-chain-economics. Companion to *A Runnable, Falsifiable Model for Orbital-Power Economics*, Medium, [publication date + URL].
 
 ## Contributing
 
