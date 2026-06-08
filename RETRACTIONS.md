@@ -36,6 +36,13 @@ The physics-corrected falsification (`results_phase1_thermal_warming_falsificati
 
 **Lesson.** A model is only useful if it is allowed to hurt the thesis. Two rounds of my own review missed the dimensional inconsistency because I was looking for confirmation; the audit caught it because the auditors were looking for failure.
 
+**Re-assessment 2026-06-08 — the retraction's *method* had its own error; the *conclusion* survives.** Turning the same adversarial pass on this retraction surfaced that the "fails 11 of 11 at all tested launch costs" result was a *single-satellite fixed-cost artifact*: the falsification charged the entire shared fixed base (the $2M ground segment + $300K procurement + 5% regulatory) to ONE satellite. Those costs are shared across a constellation — the architecture originally proposed. Re-modeled as a constellation (cost split into per-satellite *variable* vs. *fixed*, fixed amortized across the fleet), the closure test is the per-satellite contribution margin:
+
+- At today's **$3,600/kg the margin is negative across all 16 customer/pricing cases — no fleet closes.** R2's core conclusion (thermal warming is **not** a Phase-1 launch-cost-tolerant wedge) **stands**, and is now supported by stronger reasoning than the original dimensional argument.
+- At **$200/kg, 4 of 16 cases close** at plausible fleet sizes (airport-aggressive N=10, cold-city-aggressive N=13, arctic-base-aggressive N=34, airport-conservative N=166; arctic-conservative demand-capped, mining-town negative-margin).
+
+**What this changes:** the original R2 claim that the wedge is "dimensionally falsified at *all* launch costs" is **superseded** — it is falsified at *current* launch cost and closes (for a subset) at projected $200/kg. **What it does not change:** the Phase-1 retraction holds; thermal warming is a launch-cost-**dependent Phase-2 constellation wedge**, not a launch-cost-tolerant Phase-1 entry. This is a *conditional* closure against the original (pre-registered) 11-scenario unit-economics bar, found by re-running the same model — not a relaxed bar. Caveats unchanged: the 0.15 MWh/overpass deliverable, the spot-coverage / target-fills-the-spot assumption, the $/kWh-thermal WTP anchors, and N-satellite coordination feasibility are all still direction-setting. Model: `run_phase1_constellation_thermal_falsification.py`; results: `results/results_phase1_constellation_thermal_2026-06-07.md`; tests: `test_constellation_thermal.py` (4/4 pass).
+
 ---
 
 ## R3 — Premium illumination defense tier (NARROWED)
