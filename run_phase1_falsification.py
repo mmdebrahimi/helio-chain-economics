@@ -23,7 +23,7 @@ System-parameter assumptions (transparent to the verdict):
 - 3% O&M, 1.5% insurance, 10% regulatory cost.
 - $1M customer procurement amortized over 10-year contract.
 
-Outputs results to economics_model/results_phase1_falsification_2026-05-25.md.
+Outputs results to results/results_phase1_falsification_2026-05-25.md.
 """
 
 from __future__ import annotations

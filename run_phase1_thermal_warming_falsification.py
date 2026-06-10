@@ -21,7 +21,7 @@ for a new wedge):
 - Conservative: lower end of plausible WTP range
 - Aggressive: higher end of plausible WTP range
 
-Outputs to economics_model/results_phase1_thermal_warming_falsification_2026-05-26.md.
+Outputs to results/results_phase1_thermal_warming_falsification_2026-05-26.md.
 """
 
 from __future__ import annotations

@@ -7,7 +7,7 @@ Mid-term milestone #2 from `project_state/publish-v2-helio-chain-plan-2026-05-23
 Discipline (Codex 2026-05-23 brainstorm Issue 1):
     Every numeric input carries a Promotion Gate tier flag (T1-T5). The model
     is built with PARAMETERS, not committed defaults. Until a parameter's source
-    reaches T3 in `research_outputs/_claim_promotion_register.md`, the model
+    reaches T3 in `docs/CLAIM_PROMOTION_REGISTER.md`, the model
     treats it as a placeholder range, not a hard-coded number.
 
 Coverage (v0.2 — wedge restructure 2026-05-23 22:45):
@@ -51,7 +51,7 @@ import numpy as np
 
 
 # ============================================================================
-# Promotion Gate tier system — see research_outputs/_claim_promotion_register.md
+# Promotion Gate tier system — see docs/CLAIM_PROMOTION_REGISTER.md
 # ============================================================================
 
 

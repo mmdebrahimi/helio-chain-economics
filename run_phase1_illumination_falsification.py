@@ -20,7 +20,7 @@ WTP anchors:
 - SAR / disaster: $50K-$500K per mission (insurance-backed)
 - Construction night work: $5K-$30K per mission (diesel light-tower displacement)
 
-Outputs to economics_model/results_phase1_illumination_falsification_2026-05-25.md.
+Outputs to results/results_phase1_illumination_falsification_2026-05-25.md.
 """
 
 from __future__ import annotations
