@@ -100,6 +100,31 @@ def test_sbsp_to_ground_lcoe_symmetric_regulatory_output():
     assert abs(out["cost_per_kwh_with_regulatory"] - base * (1.0 + frac)) < 1e-12 * base
 
 
+def test_c2_three_placeholders_promoted_to_t3():
+    # MVP bar criterion: >=3 of the 6 placeholders promoted to T3+ (C2 milestone).
+    inputs = make_default_inputs()
+    promoted = ["pv_augmentation_revenue", "greenhouse_photon_revenue", "station_keeping_dv"]
+    for name in promoted:
+        assert inputs[name].tier == Tier.T3, f"{name} expected T3, got {inputs[name].tier}"
+    t3plus = sum(1 for p in inputs.values() if p.tier in (Tier.T3, Tier.T4, Tier.T5))
+    assert t3plus >= 3
+
+
+def test_keystone_reproduces_under_pinned_scenario():
+    # C4 re-derivation guard: keystone $0.0091/$0.1635 reproduces ONLY under the
+    # projected-mature scenario (mfg 0.10x), NOT the model's default mfg (0.31).
+    inputs = make_default_inputs()
+    inputs["in_space_manufacturing_cost_multiplier"] = m.Parameter(
+        "x", 0.10, (0.10, 0.10), "-", Tier.T4, "keystone mature scenario", "keystone"
+    )
+    got = {}
+    for lc in (200.0, 3600.0):
+        inputs["launch_cost"] = m.Parameter("launch_cost", lc, (lc, lc), "USD/kg", Tier.T4, "s", "s")
+        got[lc] = m.orbital_power_cost(inputs, delivered_power_gw_orbital=1.0, system_lifetime_years=20.0)["cost_per_kwh"]
+    assert abs(got[200.0] - 0.0091) < 5e-5, f"keystone @200/kg drifted: {got[200.0]:.4f}"
+    assert abs(got[3600.0] - 0.1635) < 5e-4, f"keystone @3600/kg drifted: {got[3600.0]:.4f}"
+
+
 def test_unit_economics_regulatory_default_unchanged_nondestructive():
     # The registered param midpoint (0.10) must NOT have silently changed the
     # premium-illumination unit-economics function's default (0.05) — that would

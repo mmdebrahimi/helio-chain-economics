@@ -16,7 +16,7 @@ current verdict.
 ## B. Per-publish checks (tick all)
 - [ ] Every `results/*.md` pass dated since the last publish is reflected in `ARTICLE_FULL.md` (verdict + the kept wall), OR explicitly out-of-scope-noted.
 - [ ] Every RETRACTION in `RETRACTIONS.md` is stated in both the article and (if mentioned) the Medium post — retractions published *first*.
-- [ ] Keystone numbers match across model + article: `$0.0091/kWh @ $200/kg` and `$0.1635/kWh @ $3,600/kg` (re-run `python helio_chain_economics.py`; grep the article for both).
+- [ ] Keystone numbers match across model + article: `$0.0091/kWh @ $200/kg` and `$0.1635/kWh @ $3,600/kg` — **under the keystone scenario (mfg 0.10× mature, 24% eff, 20yr, 640 W/kg)**, NOT model defaults (default mfg 0.31 → $0.0108/$0.1947 is the current-manufacturing scenario, a different number — see `docs/ANNUAL_REDERIVATION_CHECKLIST.md`). Re-run via that checklist's pinned-scenario snippet; grep the article for both.
 - [ ] No parameter cited at a tier in the article that disagrees with its `Tier.*` in the model.
 - [ ] Medium URL is wired into `README.md` + `ARTICLE_FULL.md` (once published).
 - [ ] `python -m pytest -q` is green; `python helio_chain_economics.py` exits 0.
