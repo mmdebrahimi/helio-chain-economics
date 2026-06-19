@@ -233,12 +233,12 @@ def make_default_inputs() -> dict[str, Parameter]:
         ),
         "station_keeping_dv": Parameter(
             name="station_keeping_dv",
-            placeholder_value=None,
-            placeholder_range=(50.0, 500.0),  # PLACEHOLDER — generic GEO baseline vs solar-pressure-perturbed kilometer-scale
+            placeholder_value=200.0,  # T3: LightSail 2 flight-measured ~200 m/s/yr SRP delta-v on a thin-film sail
+            placeholder_range=(50.0, 500.0),  # 50 = GEO N-S baseline (fetched); 500 = larger-area/mass-loading upper
             units="m/s per year",
-            tier=Tier.PLACEHOLDER,
-            source_locator=None,
-            notes="SBSP-specific delta-v under solar radiation pressure NOT surfaced in 2026-05-23 research (honest gap #3). Session physics analysis (~180 N continuous on 2 km²) suggests upper bound 10x generic GEO 50 m/s/yr. Project follow-up search needed.",
+            tier=Tier.T3,
+            source_locator="https://www.daviddarling.info/encyclopedia/S/station-keeping.html (GEO N-S ~50 m/s/yr, fetched verbatim); LightSail 2 ~200 m/s/yr SRP delta-v (https://www.mdpi.com/2353394); research_outputs/helio-station-keeping-dv-2026-06-19.md",
+            notes="PROMOTED PLACEHOLDER -> T3 (2026-06-19) via /research; closes honest gap #3. Conventional GEO N-S station-keeping = ~50 m/s/yr (fetched verbatim from daviddarling; 95% of budget) = the lower bound. A large thin-film reflector is SRP-dominated (~4.5 N/km2 non-reflective, ~2x reflective at 1 AU); LightSail 2 flight-measured ~200 m/s/yr of SRP delta-v on a CubeSat sail (search-surfaced, medium) = the thin-film-relevant central value. 500 m/s/yr upper covers larger area/mass-loading. Verification-needed: a km2-scale SBSP-specific GEO station-keeping delta-v budget would confirm the central value (LightSail 2 is a small-sail proxy).",
         ),
         "rectenna_footprint": Parameter(
             name="rectenna_footprint",
