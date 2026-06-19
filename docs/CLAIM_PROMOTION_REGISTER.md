@@ -119,3 +119,10 @@ Remaining inputs still at PLACEHOLDER (some new in v0.2 wedge restructure 2026-0
 | Param | Tier | Value | Source (verbatim-fetched) | Justification |
 |---|---|---|---|---|
 | `station_keeping_dv` | **T3** (was PLACEHOLDER) | 200 m/s/yr (range 50–500) | GEO N-S ~50 m/s/yr — David Darling Encyclopedia (fetched verbatim); LightSail 2 ~200 m/s/yr SRP Δv (mdpi, search-surfaced) | Closes honest-gap #3. Floor verbatim-verified; thin-film central from LightSail 2 flight data + SRP physics (~4.5 N/km²). Verification: km²-scale SBSP-specific Δv budget would confirm the central. |
+
+## 2026-06-19 (c) — model v0.4 (C3 bandwidth + C5 regulatory)
+
+| Param | Tier | Value | Source | Justification |
+|---|---|---|---|---|
+| `regulatory_cost_fraction` | **T2** (newly registered) | range 0.05–0.15 (midpoint 0.10, slider-only) | ARTICLE_FULL.md §4 matrix + §4.3 "5–15% of total capex" | C5: regulatory was a scattered function-default + prose-only; now a single-source registered Parameter, propagated into core LCOE as a parallel sensitivity output (`cost_per_kwh_with_regulatory`) WITHOUT moving the keystone. T2 = article's own risk-register estimate, not a primary source. |
+| workload bandwidth multipliers (`WORKLOAD_BANDWIDTH_MULTIPLIER`) | T2 (ordinal, documented) | 1.0/0.85/0.60/0.40/0.10 | ISL envelope: Starlink optical ISL ~100 Gbps/link (peak 200), ~5.6 Tbps aggregate (WebSearch 2026-06-19) | C3 "document why defensible" branch: multipliers are ORDINAL egress-penalty placeholders (correct rank + sign), NOT physics-derived (per-workload egress GB/s dataset is an open gap — followup row 5). Single source of truth; both compute functions reference it. |

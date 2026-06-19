@@ -118,6 +118,44 @@ class WorkloadClass(Enum):
     RENDERING = auto()  # input small, output medium, latency-flexible
 
 
+# ---------------------------------------------------------------------------
+# Workload bandwidth-penalty multipliers (C3, model v0.4 — 2026-06-19)
+# ---------------------------------------------------------------------------
+# These scale a workload's realizable orbital-compute revenue by how much its
+# *egress* (data that must leave orbit over the inter-satellite/ground link)
+# erodes its economics. They are ORDINAL PLACEHOLDERS, NOT physics-derived.
+#
+# WHY THEY ARE DEFENSIBLE (the "OR document why defensible" branch of C3):
+#   The physical envelope is real and finite. An operational optical
+#   inter-satellite link (ISL) sustains ~100 Gbps per link (peaking ~200), at
+#   ~1550 nm, with ~3 links/satellite (Starlink; aggregate ~5.6 Tbps across
+#   ~9,000 lasers — WebSearch 2026-06-19). Egress is therefore a hard, shared,
+#   bounded resource. The multipliers order the five workload classes by egress
+#   intensity, which is the correct *sign and ranking*:
+#     - BITCOIN_POW  1.00  near-zero egress (only the winning nonce/share leaves)
+#     - AI_INFERENCE 0.85  small prompt in / small completion out per call
+#     - RENDERING    0.60  small scene in / medium frame out
+#     - SCI_SIM      0.40  large result sets must be returned (output-bound)
+#     - AI_TRAINING  0.10  massive gradient/checkpoint sync dominates (BW-prohibitive)
+#
+# WHY THEY ARE NOT PROMOTED TO A DERIVATION:
+#   A true physics derivation needs per-workload egress requirements (GB/s of
+#   data that MUST cross the link per PFLOP of useful work) divided by the ISL
+#   budget. That per-workload egress dataset does not exist in the public
+#   literature (open research gap — follow-up queue row 5). Inventing the GB/s
+#   figures to back-solve a multiplier would be fake precision; per the model's
+#   tier discipline these stay ordinal until a primary egress dataset lands.
+#   They are correct ordinally (rank + sign), provisional cardinally (the exact
+#   0.85 / 0.10 magnitudes). Sensitivity sweeps should treat them as such.
+WORKLOAD_BANDWIDTH_MULTIPLIER: dict["WorkloadClass", float] = {
+    WorkloadClass.BITCOIN_POW: 1.0,
+    WorkloadClass.AI_INFERENCE: 0.85,
+    WorkloadClass.AI_TRAINING_BATCH: 0.10,
+    WorkloadClass.SCIENTIFIC_SIMULATION: 0.40,
+    WorkloadClass.RENDERING: 0.60,
+}
+
+
 # ============================================================================
 # Phase enumeration (sub-criterion 3 — gated by tech-readiness, not dates)
 # ============================================================================
@@ -358,6 +396,16 @@ def make_default_inputs() -> dict[str, Parameter]:
             source_locator=None,
             notes="NEW wedge added v0.7 per 2026-05-25 scope clarification. PLACEHOLDER: thermal-energy customers pay much less than electricity customers (~$0.30/kWh thermal vs $0.50-$4.09/kWh electrical) because thermal is lower-grade energy and the displaced fuel (heating oil / natural gas) is cheaper than the displaced fuel for electricity (diesel-fired genset). Range: $0.05/kWh thermal (cheap natural-gas heating displacement) → $1.50/kWh thermal (Arctic-base diesel heating with $4/L delivered fuel at ~80% furnace efficiency). Promotion to T3 requires primary-source WTP anchors: airport winter-ops budget data, Arctic-base diesel-heating cost-of-service, eventual cold-city heating-degree-day pricing. Falsification pass queued for v0.8.",
         ),
+        # --- v0.4 (2026-06-19): regulatory cost as a first-class registered param (C5) ---
+        "regulatory_cost_fraction": Parameter(
+            name="regulatory_cost_fraction",
+            placeholder_value=None,  # T2: slider-only, midpoint anchor; NOT a committed default
+            placeholder_range=(0.05, 0.15),  # article §4.3: 5-15% of total capex (risk-register estimate)
+            units="dimensionless (regulatory lifecycle cost as a fraction of total capex)",
+            tier=Tier.T2,
+            source_locator="ARTICLE_FULL.md §4 (per-phase regulatory exposure matrix) + §4.3 (5-15% of total capex); structured risk-register estimate, NOT a primary external source",
+            notes="REGISTERED v0.4 (2026-06-19, C5) — previously a scattered function-default (0.05 in premium-illumination + thermal unit-economics; 0.10 in the constellation re-assessment). This Parameter is now the SINGLE documented source of truth for the regulatory fraction; its range (0.05-0.15) is the article §4.3 '5-15% of total capex' band. Tier T2 (article's own structured risk-register estimate, a judgment call per §4.3 — NOT a primary external source), so value_or_placeholder() returns the 0.10 midpoint as a soft slider anchor only. NON-DESTRUCTIVE: the existing unit-economics functions keep their explicit regulatory_pct_of_total_capex defaults UNCHANGED (so the 2026-05-25/06-07 falsification numbers and the article's '5%-of-total-capex' R2 prose do not move); migrating them to this param's midpoint is a separate ratification (it would change committed falsification results). orbital_power_cost()/sbsp_to_ground_lcoe() now emit a regulatory-loaded SENSITIVITY output using this param WITHOUT changing the keystone cost_per_kwh.",
+        ),
     }
 
 
@@ -391,13 +439,9 @@ def compute_wedge_revenue_per_year(
     power_density_kw_per_kg = inputs["power_density_kw_per_kg"].value_or_placeholder()
     annual_revenue = revenue.value_or_placeholder() * (spacecraft_mass_kg * power_density_kw_per_kg)  # 2026-05-23 Blocker #1 fix (was mass/1000 hardcoded 1 kW/ton)
 
-    workload_multiplier = {
-        WorkloadClass.BITCOIN_POW: 1.0,  # no bandwidth penalty
-        WorkloadClass.AI_INFERENCE: 0.85,  # low BW; minor penalty
-        WorkloadClass.AI_TRAINING_BATCH: 0.10,  # bandwidth-prohibitive currently
-        WorkloadClass.SCIENTIFIC_SIMULATION: 0.40,  # output-bound
-        WorkloadClass.RENDERING: 0.60,  # input small, output medium
-    }[workload_class]
+    # C3 (v0.4): ordinal egress-penalty multipliers, documented + ISL-anchored at
+    # the module-level WORKLOAD_BANDWIDTH_MULTIPLIER (single source of truth).
+    workload_multiplier = WORKLOAD_BANDWIDTH_MULTIPLIER[workload_class]
 
     return annual_revenue * workload_multiplier - launch_amortized_per_year
 
@@ -1264,8 +1308,19 @@ def orbital_power_cost(
     lifetime_energy_kwh = delivered_power_gw_orbital * 1.0e6 * lifetime_hours
     cost_per_kwh = capex_total / lifetime_energy_kwh
 
+    # C5 (v0.4): regulatory exposure as a PARALLEL sensitivity output. The keystone
+    # `cost_per_kwh` above is intentionally LEFT UNCHANGED (continuity with the
+    # published $0.0091/kWh @ $200/kg result); regulatory now propagates as an
+    # explicit add-on field so it no longer "lives only in prose" (article §2.5/§4.3).
+    reg_fraction = inputs["regulatory_cost_fraction"].value_or_placeholder()
+    regulatory_capex = reg_fraction * capex_total
+    cost_per_kwh_with_regulatory = (capex_total + regulatory_capex) / lifetime_energy_kwh
+
     return {
         "cost_per_kwh": cost_per_kwh,
+        "cost_per_kwh_with_regulatory": cost_per_kwh_with_regulatory,
+        "regulatory_cost_fraction": reg_fraction,
+        "regulatory_capex_usd": regulatory_capex,
         "system_mass_kg": system_mass_kg,
         "system_mass_tons": system_mass_kg / 1000.0,
         "launch_capex_usd": capex_launch_total,
@@ -1319,8 +1374,16 @@ def sbsp_to_ground_lcoe(
     lifetime_energy_kwh = delivered_power_gw_to_ground * 1.0e6 * lifetime_hours
     cost_per_kwh = capex_total / lifetime_energy_kwh
 
+    # C5 (v0.4): regulatory sensitivity output (parallel; keystone cost_per_kwh unchanged).
+    reg_fraction = inputs["regulatory_cost_fraction"].value_or_placeholder()
+    regulatory_capex = reg_fraction * capex_total
+    cost_per_kwh_with_regulatory = (capex_total + regulatory_capex) / lifetime_energy_kwh
+
     return {
         "cost_per_kwh": cost_per_kwh,
+        "cost_per_kwh_with_regulatory": cost_per_kwh_with_regulatory,
+        "regulatory_cost_fraction": reg_fraction,
+        "regulatory_capex_usd": regulatory_capex,
         "system_mass_kg": system_mass_kg,
         "system_mass_tons": system_mass_kg / 1000.0,
         "launch_capex_usd": capex_launch_total,
@@ -1394,13 +1457,7 @@ def workload_break_even_launch_cost(
     # Inverse-solve: rearrange compute_wedge_revenue_per_year for launch_cost
     revenue = inputs["orbital_compute_revenue"].value_or_placeholder()
     power_density_kw_per_kg = inputs["power_density_kw_per_kg"].value_or_placeholder()
-    workload_multiplier = {
-        WorkloadClass.BITCOIN_POW: 1.0,
-        WorkloadClass.AI_INFERENCE: 0.85,
-        WorkloadClass.AI_TRAINING_BATCH: 0.10,
-        WorkloadClass.SCIENTIFIC_SIMULATION: 0.40,
-        WorkloadClass.RENDERING: 0.60,
-    }[workload_class]
+    workload_multiplier = WORKLOAD_BANDWIDTH_MULTIPLIER[workload_class]  # C3 v0.4: single source of truth
     annual_revenue = revenue * workload_multiplier * (spacecraft_mass_kg * power_density_kw_per_kg)  # 2026-05-23 Blocker #1 fix
     # annual_revenue - (launch_cost * spacecraft_mass_kg / lifetime) = target
     # → launch_cost = (annual_revenue - target) * lifetime / spacecraft_mass_kg
