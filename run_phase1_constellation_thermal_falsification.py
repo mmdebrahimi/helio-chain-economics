@@ -81,6 +81,48 @@ CUSTOMER_DEMAND_KWH_PER_YEAR = {
 }
 
 
+# --- Spot-coverage / orbit physics (innovation pass 2026-06-08) ---------------
+# The delivered POWER (kW) a single 614 m^2 mirror redirects is set by aperture x
+# solar-constant x optical-transmission and is INDEPENDENT of orbit altitude (see
+# premium_illumination_physical_deliverable: delivered_kw does not depend on spot
+# size). What altitude changes is the SPOT AREA (grows ~ altitude^2 from the sun's
+# 0.53deg angular size). Spot-coverage efficiency = fraction of the redirected beam
+# that lands on a paying target = min(1, target_area / spot_area). The R2-corrected
+# single-sat anchor (KWH_THERMAL_PER_OVERPASS=150) bakes in a ~0.60-class coverage.
+# A LARGE target (open-pit mine / frozen port / utility solar farm / greenhouse
+# region) at a LOW orbit can fill the spot, pushing coverage toward 1.0 and lifting
+# delivered energy/overpass by up to 1/0.60 ~= 1.67x WITHOUT changing the mirror.
+SUN_ANGULAR_DIAMETER_RAD = 0.00926  # 0.53 deg
+BASELINE_SPOT_COVERAGE = 0.60       # coverage implicit in the 150 kWh/overpass anchor
+
+
+def spot_area_km2(altitude_km: float) -> float:
+    """Diffraction/finite-source spot area from the sun's angular size at altitude."""
+    diameter_m = altitude_km * 1000.0 * SUN_ANGULAR_DIAMETER_RAD
+    radius_m = diameter_m / 2.0
+    return math.pi * radius_m * radius_m / 1.0e6
+
+
+def coverage_matched_kwh_per_overpass(
+    target_area_km2: float,
+    altitude_km: float,
+    baseline_kwh_per_overpass: float = KWH_THERMAL_PER_OVERPASS,
+    baseline_coverage: float = BASELINE_SPOT_COVERAGE,
+) -> float:
+    """Energy/overpass after matching a real target to the delivered spot.
+
+    Re-derives the R2 anchor's coverage assumption from the chosen target size and
+    orbit, then rescales the (coverage-independent) baseline accordingly. A target
+    that fills or exceeds the spot recovers the spillover the 0.60 anchor discards;
+    a too-small target (runway ~1 km^2) is PUNISHED, not rewarded. Capped at the
+    physical ceiling (coverage cannot exceed 1.0).
+    """
+    spot = spot_area_km2(altitude_km)
+    coverage = min(1.0, target_area_km2 / spot) if spot > 0 else 0.0
+    gain = coverage / baseline_coverage  # may be <1 (small target) or up to 1/0.60
+    return baseline_kwh_per_overpass * gain
+
+
 def _single_sat_costs(customer_class: str, overpasses_per_year: float,
                       revenue_per_kwh: float, launch_cost_per_kg: float) -> dict:
     """Run the EXISTING single-sat unit-economics model and return its cost breakdown."""

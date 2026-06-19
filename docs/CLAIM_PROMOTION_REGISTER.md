@@ -105,3 +105,11 @@ Remaining inputs still at PLACEHOLDER (some new in v0.2 wedge restructure 2026-0
 - Bump a row's tier when its promotion-path condition is met (record verification evidence in Justification column).
 - Demote a row if its source is retracted, paywalled, or refuted.
 - Stale-flag any T1 row that has not moved in 60 days.
+
+## 2026-06-19 — reflector-service revenue anchors (/research helio-reflector-pricing-anchors)
+
+| Param | Tier | Value | Source (verbatim-fetched) | Justification |
+|---|---|---|---|---|
+| `pv_augmentation_revenue` | **T3** (was PLACEHOLDER) | $0.06/kWh (range $0.03–0.06) | CAISO midday $30→evening-peak $60 /MWh — Thunder Said Energy "Duck curves" | Two fetched-verbatim CAISO anchors; the dusk-spread is the value of shifting solar into the evening ramp. Model-default-safe with caveat (verification: confirm dusk-spread vs retail/PPA proxy). |
+| `greenhouse_photon_revenue` | **T3** (was PLACEHOLDER) | $0.15/kWh (range $0.10–0.16) | NL non-household electricity €0.15/kWh Dec 2024 — Eurostat via Trading Economics (fetched); commodity floor €0.088; LED study €0.143 (arXiv 1406.3016) | Eurostat official-statistics anchor, fetched verbatim + 2 corroborations. Verification: NL horticulture energy-tax exemptions may lower effective displaced cost. |
+| `premium_illumination_revenue_per_mission` | **T1** (stays PLACEHOLDER) | not promoted | Reflect Orbital — $1,000 deposit only; no public rate card (The Pricer, fetched) | The $5,000/hr/mirror figure is media-attributed ("envisions"), rejected at intake. No T3 promotion possible on public sources. |

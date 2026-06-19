@@ -300,12 +300,12 @@ def make_default_inputs() -> dict[str, Parameter]:
         # --- Reflector services trio (v0.2 — split from v0.1 single param per /probe 2026-05-23) ---
         "pv_augmentation_revenue": Parameter(
             name="pv_augmentation_revenue",
-            placeholder_value=None,
-            placeholder_range=(0.005, 0.20),
+            placeholder_value=0.06,  # T3: CAISO evening-peak $60/MWh (the dusk ramp augmentation extends into)
+            placeholder_range=(0.03, 0.06),  # CAISO midday $30/MWh -> 6-8pm $60/MWh shoulder spread
             units="USD/kWh-equivalent terrestrial PV augmentation (dawn/dusk extension)",
-            tier=Tier.PLACEHOLDER,
-            source_locator=None,
-            notes="Reflect Orbital wedge — COMPETITIVE OCCUPATION ($20M Series A; 50K mirrors target by 2030; $5K/hr per mirror + revenue-sharing). Helio-chain enters only with non-obvious advantage. Anchored against current PV LCOE + capacity-factor improvement during dawn/dusk windows. Range: $0.005/kWh (commodity wholesale floor) → $0.20/kWh (peak retail).",
+            tier=Tier.T3,
+            source_locator="https://thundersaidenergy.com/downloads/duck-curves-us-power-price-duckiness-over-time/ (CAISO 3-yr avg: midday ~$30/MWh -> 6-8pm $60/MWh); research_outputs/helio-reflector-pricing-anchors-2026-06-19.md",
+            notes="PROMOTED PLACEHOLDER -> T3 (2026-06-19) via /research. Value of orbital PV-augmentation = price of shifting solar into the dusk ramp = the CAISO midday->evening-peak spread ($0.03->$0.06/kWh, fetched verbatim from Thunder Said Energy CAISO 3-yr avg). Tightened from the prior $0.005-0.20 guess. Reflect Orbital revenue-share-with-solar-farms framing supports the mechanism but adds no number; the $5K/hr/mirror figure is media-attributed (rejected, see _unsupported memo). Verification-needed: confirm dusk-spread (not retail/PPA) is the right proxy.",
         ),
         "premium_illumination_revenue_per_mission": Parameter(
             name="premium_illumination_revenue_per_mission",
@@ -314,16 +314,16 @@ def make_default_inputs() -> dict[str, Parameter]:
             units="USD per illumination mission (single overpass / event)",
             tier=Tier.PLACEHOLDER,
             source_locator=None,
-            notes="NEW wedge added v0.2 per /probe 2026-05-23. Customer classes (see IlluminationMissionType): defense ISR, SAR corridor, disaster-zone, event-spectacle, construction night work, maritime SAR. Reflect Orbital anchor: ~$5,000/hour per mirror baseline. Defense / disaster events: orders-of-magnitude higher WTP per mission ($1-5M). Mission = single overpass with controlled illumination of named target. Reflect Orbital reports 260K customer applications from 157 countries — validates demand exists.",
+            notes="NEW wedge added v0.2 per /probe 2026-05-23. Customer classes (see IlluminationMissionType): defense ISR, SAR corridor, disaster-zone, event-spectacle, construction night work, maritime SAR. Reflect Orbital anchor: ~$5,000/hour per mirror baseline. Defense / disaster events: orders-of-magnitude higher WTP per mission ($1-5M). Mission = single overpass with controlled illumination of named target. Reflect Orbital reports 260K customer applications from 157 countries — validates demand exists. 2026-06-19 /research: STAYS PLACEHOLDER — Reflect Orbital has NO public rate card (only a confirmed $1,000 'Scheduled Beam' deposit + a 10% deposit-queue model; a 1-hr event is an ~18-satellite constellation pass, not one mirror). The widely-cited $5,000/hr/mirror figure is media-attributed ('envisions charging'), rejected at intake. No T3 promotion possible on public sources; see research_outputs/helio-reflector-pricing-anchors-2026-06-19.md.",
         ),
         "greenhouse_photon_revenue": Parameter(
             name="greenhouse_photon_revenue",
-            placeholder_value=None,
-            placeholder_range=(0.02, 0.50),
+            placeholder_value=0.15,  # T3: Dutch non-household electricity EUR0.15/kWh ~ $0.16 (Eurostat Dec 2024)
+            placeholder_range=(0.10, 0.16),  # commodity floor EUR0.088 -> non-household retail EUR0.15/kWh
             units="USD per kWh photon-equivalent delivered to high-latitude commercial greenhouse",
-            tier=Tier.PLACEHOLDER,
-            source_locator=None,
-            notes="NEW wedge added v0.2 per /probe 2026-05-23 (narrow biology wedge). High-latitude commercial greenhouses already pay for supplemental HPS / LED grow-lighting. Orbital photons compete against grid electricity for those lamps. Range: $0.02/kWh (cheap industrial grid) → $0.50/kWh (peak retail + LED overhead). NOT the same as airport heating (rejected — physics fails). Greenhouses use photons for biology, NOT for temperature.",
+            tier=Tier.T3,
+            source_locator="https://tradingeconomics.com/netherlands/electricity-prices-non-household-medium-size-consumers-eurostat-data.html (Eurostat: NL non-household EUR0.15/kWh, Dec 2024); research_outputs/helio-reflector-pricing-anchors-2026-06-19.md",
+            notes="PROMOTED PLACEHOLDER -> T3 (2026-06-19) via /research. Greenhouse photons compete against the grid electricity a grower pays for HPS/LED grow-lights. Anchor = Dutch non-household electricity EUR0.15/kWh ~ $0.16 (Eurostat Dec 2024, fetched verbatim); lower bound = large-industry commodity EUR0.088/kWh; corroborated by a horticultural LED study at EUR0.143/kWh (arXiv 1406.3016). Tightened from the prior $0.02-0.50 guess. Verification-needed: NL horticulture energy-tax exemptions may lower the effective displaced cost. NOT airport heating (rejected — physics fails); greenhouses use photons for biology, not temperature.",
         ),
         # --- DEPRECATED v0.7 — direct power-as-a-service (microwave/laser to terrestrial rectenna) ---
         # Was a v0.2 wedge anchored at T3 (2026-05-23 23:20) per autonomous /research run on remote-off-grid power tariffs.
